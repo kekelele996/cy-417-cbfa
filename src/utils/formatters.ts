@@ -17,3 +17,15 @@ export const transportText: Record<string, string> = { walk: '步行', metro: '�
 export const formatDate = (value: string) => dayjs(value).format('YYYY-MM-DD');
 export const formatCurrency = (value: number, currency = 'CNY') => new Intl.NumberFormat('zh-CN', { style: 'currency', currency }).format(value);
 
+/** 行程覆盖的全部日期（含首尾），按天列出 */
+export function listTripDates(startDate: string, endDate: string): string[] {
+  if (!startDate || !endDate) return [];
+  const start = dayjs(startDate).startOf('day');
+  const end = dayjs(endDate).startOf('day');
+  const diff = end.diff(start, 'day');
+  if (diff < 0) return [];
+  return Array.from({ length: diff + 1 }, (_, i) => start.add(i, 'day').format('YYYY-MM-DD'));
+}
+
+export const tripDayCount = (startDate: string, endDate: string) => listTripDates(startDate, endDate).length;
+
