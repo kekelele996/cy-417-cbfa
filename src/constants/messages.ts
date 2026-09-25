@@ -6,5 +6,10 @@ export const messages = {
   emptySpots: '没有符合条件的景点。',
   budgetExceeded: '预算可能超支，请调整景点或交通方式',
   storageRecovered: '本地数据已恢复',
+  tripDatesUpdated: '日期已更新，新增日期已自动补齐每日额度',
+  tripDatesBlocked: (dates: string) => `以下日期已有景点安排，不能删除：${dates}`,
+  dayBudgetSaved: '当日额度已更新',
+  dayBudgetOverTotal: (over: string) => `所有天额度加机动余额不能超过总预算，本次超出 ${over}，修改未保存`,
+  spotOverDayBudget: (detail: string) => `当天额度不足（${detail}），本次未写入，原行程与额度保持不变`,
+  spotMoved: '景点已移动到目标日期',
 };
-

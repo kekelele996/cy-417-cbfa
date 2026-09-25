@@ -11,6 +11,7 @@ export interface DayPlan {
   trip_id: string;
   day_index: number;
   date: string;
+  /** 每日额度：当天可花费上限，受 Trip.budget 总预算约束 */
+  budget: number;
   items: DayPlanItem[];
 }
-

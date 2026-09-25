@@ -4,6 +4,7 @@ import type { Trip } from '../models/trip';
 import { tripApi } from '../api/tripApi';
 import { messages } from '../constants/messages';
 import { toast } from '../utils/message';
+import { useDayPlanStore } from './dayPlanStore';
 
 export const useTripStore = defineStore('trip', {
   state: () => ({ trips: tripApi.list() as Trip[], statusFilter: 'all' as TripStatus | 'all' }),
@@ -26,8 +27,24 @@ export const useTripStore = defineStore('trip', {
       };
       this.trips.unshift(trip);
       tripApi.save(this.trips);
+      useDayPlanStore().seedTripDays(trip);
       toast.ok(messages.tripCreated);
       return trip.id;
+    },
+    /** 修改行程日期：延长自动补齐每日额度；缩短时若有景点则指出不能删的日期并保留原样 */
+    updateTripDates(id: string, start: string, end: string) {
+      const trip = this.trips.find((item) => item.id === id);
+      if (!trip) return false;
+      const result = useDayPlanStore().syncTripDates(trip, start, end);
+      if (!result.ok) {
+        toast.fail(messages.tripDatesBlocked(result.blocked.join('、')));
+        return false;
+      }
+      trip.start_date = start;
+      trip.end_date = end;
+      tripApi.save(this.trips);
+      toast.ok(messages.tripDatesUpdated);
+      return true;
     },
     removeTrip(id: string) {
       this.trips = this.trips.filter((trip) => trip.id !== id);
@@ -36,4 +53,3 @@ export const useTripStore = defineStore('trip', {
     },
   },
 });
-
